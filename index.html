@@ -3,24 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Prontuários Médicos</title>
+    <title>Sistema de Diagnóstico Médico</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Bem-vindo ao Sistema de Prontuários Médicos</h1>
+        <h1>Diagnóstico de Doenças Médicas</h1>
     </header>
-    <section class="intro">
-        <h2>O que é este sistema?</h2>
-        <p>Este sistema utiliza inteligência artificial para prever doenças com base em sintomas informados e gerar prontuários médicos. Confira abaixo as funcionalidades:</p>
-        <ul>
-            <li>Registrar novos prontuários médicos</li>
-            <li>Visualizar histórico de pacientes</li>
-            <li>Predição de doenças com base em sintomas</li>
-        </ul>
+
+    <section>
+        <h2>Informe os Sintomas</h2>
+        <form action="/diagnose" method="POST">
+            <label for="symptoms">Selecione os sintomas:</label><br>
+            <select name="symptoms" id="symptoms" multiple>
+                {% for symptom in symptoms %}
+                    <option value="{{ symptom }}">{{ symptom }}</option>
+                {% endfor %}
+            </select><br><br>
+            <input type="submit" value="Diagnosticar">
+        </form>
     </section>
+
+    {% if disease %}
+    <section>
+        <h2>Diagnóstico</h2>
+        <p><strong>Doença Predita:</strong> {{ disease }}</p>
+        <p><strong>Confiança:</strong> {{ confidence }}%</p>
+        <p><strong>Sintomas Informados:</strong> {{ symptoms | join(', ') }}</p>
+    </section>
+    {% endif %}
+
     <footer>
-        <p>&copy; 2024 Sistema de Prontuários Médicos</p>
+        <p>&copy; 2024 Sistema de Diagnóstico Médico</p>
     </footer>
 </body>
 </html>
+
