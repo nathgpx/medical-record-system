@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Diagnóstico Médico</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
@@ -12,14 +12,40 @@
     </header>
 
     <section>
-        <h2>Informe os Sintomas</h2>
+        <h2>Informações do Paciente</h2>
         <form action="/diagnose" method="POST">
-            <label for="symptoms">Selecione os sintomas:</label><br>
-            <select name="symptoms" id="symptoms" multiple>
+            <div>
+                <label for="name">Nome do Paciente:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="age">Idade:</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+            <div>
+                <label for="gender">Gênero:</label>
+                <select id="gender" name="gender" required>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                </select>
+            </div>
+            <div>
+                <label for="contact">Contato:</label>
+                <input type="text" id="contact" name="contact" required>
+            </div>
+
+            <h3>Selecione os Sintomas:</h3>
+            <select name="symptoms" id="symptoms" multiple required>
                 {% for symptom in symptoms %}
                     <option value="{{ symptom }}">{{ symptom }}</option>
                 {% endfor %}
             </select><br><br>
+
+            <div>
+                <label for="observations">Observações:</label>
+                <textarea id="observations" name="observations"></textarea>
+            </div><br>
+
             <input type="submit" value="Diagnosticar">
         </form>
     </section>
@@ -30,6 +56,7 @@
         <p><strong>Doença Predita:</strong> {{ disease }}</p>
         <p><strong>Confiança:</strong> {{ confidence }}%</p>
         <p><strong>Sintomas Informados:</strong> {{ symptoms | join(', ') }}</p>
+        <p><strong>Observações:</strong> {{ observations }}</p>
     </section>
     {% endif %}
 
@@ -38,4 +65,3 @@
     </footer>
 </body>
 </html>
-
