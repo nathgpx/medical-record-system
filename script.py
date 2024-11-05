@@ -154,4 +154,4 @@ def diagnose():
                            symptoms=symptoms_input, observations=observations)
 
 if __name__ == '__main__':
-    app.run(debug=True
+    app.run(debug=True)
