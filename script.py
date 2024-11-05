@@ -46,8 +46,7 @@ def build_model():
 model = build_model()
 
 # Dados de treino (simplificados)
-
-        # Training data from original code
+ # Training data from original code
         self.training_data = np.array([
               # Gripe (e.g. presence of some symptoms)
     [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -90,7 +89,7 @@ model = build_model()
     # Lúpus
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1]
         ])
-])
+
 
 # Treinar o modelo (simulação)
 model.fit(training_data, labels_encoded, epochs=100, batch_size=4, verbose=0)
@@ -105,18 +104,54 @@ def predict_disease(symptom_vector):
     confidence = float(prediction[0][disease_index]) * 100
     return diseases[disease_index], confidence
 
+# Função para criar um prontuário médico
+def create_medical_record(patient_data, symptoms_input, observations):
+    symptom_vector = [1 if symptom in symptoms_input else 0 for symptom in symptoms]
+    disease, confidence = predict_disease(symptom_vector)
+    
+    record = {
+        "record_id": str(uuid.uuid4()),
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "patient": patient_data,
+        "consultation": {
+            "symptoms": symptoms_input,
+            "observations": observations,
+            "predicted_disease": disease,
+            "confidence": f"{confidence:.2f}%"
+        },
+        "status": "active"
+    }
+    
+    # Salvando o prontuário (isso pode ser feito em um arquivo JSON ou banco de dados)
+    # Aqui estamos apenas retornando o prontuário como um exemplo
+    return record
+
 # Rota principal
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', symptoms=symptoms)
 
 # Rota para diagnóstico
 @app.route('/diagnose', methods=['POST'])
 def diagnose():
+    # Coletando os dados do paciente
+    patient_data = {
+        "name": request.form['name'],
+        "age": request.form['age'],
+        "gender": request.form['gender'],
+        "contact": request.form['contact']
+    }
+    
+    # Coletando os sintomas e observações
     symptoms_input = request.form.getlist('symptoms')
-    symptom_vector = [1 if symptom in symptoms_input else 0 for symptom in symptoms]
-    disease, confidence = predict_disease(symptom_vector)
-    return render_template('index.html', disease=disease, confidence=confidence, symptoms=symptoms_input)
+    observations = request.form['observations']
+    
+    # Criando o prontuário médico
+    record = create_medical_record(patient_data, symptoms_input, observations)
+    
+    return render_template('index.html', disease=record['consultation']['predicted_disease'], 
+                           confidence=record['consultation']['confidence'], 
+                           symptoms=symptoms_input, observations=observations)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True
